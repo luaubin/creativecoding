@@ -1,0 +1,159 @@
+// Create a global variable for the form manager
+var formManager;
+var s1 = true;
+var s2 = true;
+var s3 = true;
+
+var s4 = true;
+var s5 = true;
+var s6 = true;
+
+
+
+function setup() {
+    // Create a drawing canvas
+    createCanvas(1280, 720);
+
+    formManager = new P5FormManager();
+
+    form = new P5Form();
+
+    form.title = "Cellular Automata";
+    form.w = 300;
+    form.h = 200;
+
+    button = new P5Button();
+    button.text = "Automaton";
+    button.y = 25; 
+    button.x = 25; 
+    button.onClick = function(){
+        s1 = !s1;
+    }
+
+    button2 = new P5Button();
+    button2.text = "Automaton2";
+    button2.y = 50;
+    button2.x = 25;
+    button2.onClick = function(){
+        s2 = !s2;
+    }
+
+    button3 = new P5Button();
+    button3.text = "Automaton3";
+    button3.y = 75;
+    button3.x = 25;
+    button3.onClick = function(){
+        s3 = !s3;
+    }
+
+    button4 = new P5Button();
+    button4.text = "Automaton4";
+    button4.y = 25; 
+    button4.x = 110; 
+    button4.onClick = function(){
+        s4 = !s4;
+    }
+
+    button5 = new P5Button();
+    button5.text = "Automaton5";
+    button5.y = 50;
+    button5.x = 110;
+    button5.onClick = function(){
+        s5= !s5;
+    }
+
+    button6 = new P5Button();
+    button6.text = "Automaton6";
+    button6.y = 75;
+    button6.x = 110;
+    button6.onClick = function(){
+        s6 = !s36
+    }
+
+    form.container.addControl(button6);
+    form.container.addControl(button5);
+    form.container.addControl(button4);
+    form.container.addControl(button3);
+    form.container.addControl(button2);
+    form.container.addControl(button);
+    formManager.showForm(form);
+}
+
+function draw() {
+    // Clear the background
+    background(55, 30, 33);
+
+   
+
+    if(s2 == true){
+        background(255, 255, 10);
+    } else{
+        background(55, 30, 33);
+    }
+
+
+
+    if(s5 == true){
+        fill(2, 2, 2);
+    } else{
+        fill(33, 22, 55);
+    }
+    for(m = 0; m < 100; m++){
+        for(l = 0; l < 100; l++){
+            rect(m * 11 - 200, l * 11 - 200, 22, 22);
+        }
+    }
+
+
+
+    if(s4 == true){
+        fill(55, 76, 147);
+    } else{
+        fill(2, 200, 255);
+    }
+    for(m = 0; m < 100; m++){
+        for(l = 0; l < 100; l++){
+            rect(m * 11 + 200, l * 11 + 200, 5, 5);
+        }
+    }
+
+
+
+    if(s3 == true){
+        fill(40, 40, 40);
+    } else{
+        fill(100, 20, 100);
+    }
+    for(m = 0; m < 100; m++){
+        for(l = 0; l < 100; l++){
+            rect(m * 11, l * 11, 10, 10);
+        }
+    }
+    
+
+
+    if(s1 == true){
+        fill(40, 40, 40);
+    } else{
+        fill(100, 20, 100);
+    }
+
+    for(i = 0; i < 10; i++){
+        for(j = 0; j < 10; j++){
+            rect(i * 11 + 300, j * 11 + 300, 10, 10);
+        }
+    }
+
+    // Render the forms
+    formManager.renderForms();
+}
+
+function keyPressed() {     // p5.js key press event function
+    // Notify the formManager
+    formManager.keyPressed();
+}
+
+function keyReleased() {    // p5.js key release event function
+    // Notify the formManager
+    formManager.keyReleased();
+}
