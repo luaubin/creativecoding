@@ -1,0 +1,522 @@
+// SEE ALGORITHMIC PARAMETERS ON LINES 160 - 170 // 
+
+// SEE STARTING STATE PARAMETERS ON LINES 74 - 83 //
+
+
+
+var formManager;
+
+
+
+let cells;
+
+let cells_2; 
+
+
+
+// AMOUNT OF ROWS AND COLUMNS
+
+let cols = 1000; 
+
+let rows = 110;
+
+
+
+// COLOR OF 'ON' RECTANGLES, COLOR OF 'OFF' RECTANGLES, BACKGROUND COLOR
+
+var c1;
+
+var c0;
+
+var cb;
+
+
+
+// RECTANGLE SCALE, BORDER BETWEEN RECTANGLES IN GRID, DISTANCE FROM LEFT EGDE OF CANVAS, DISTANCE FROM TOP EDGE OF CANVAS //
+
+let s = 3;
+
+let b = 15; 
+
+let ofx = 50; 
+
+let ofy = 20;
+
+
+
+// CANVAS WIDTH, CANVAS HEIGHT 
+
+let cx = 1500; 
+
+let cy = 900; 
+
+
+
+// FRAME-RATE (SPEED OF ANIMATION)
+
+let fr = 17; 
+
+
+
+let state; 
+
+
+
+// BOOLEAN VARIABLE FOR GUI BUTTON --> SEE IF STATEMENT IN DRAW LOOP 
+
+let s1; 
+
+
+
+// VARIABLES FOR P5FORMS
+
+let colsT = cols; // COLUMNS
+
+let rowsT = rows; // ROWS 
+
+
+
+// OTHER POTENTIAL CONTROLS 
+
+let scaleT = s; // SCALE OF RECTANGLE
+
+let bT = b; // BORDER SPACING
+
+let frT = fr; // FRAME RATE
+
+let sst = 2; // STARTING STATE VARIABLE --> SEE IF STATEMENT IN INIT FUNCTION 
+
+
+
+function preload() {
+
+  // Create the form manager
+
+  // formManager = new P5FormManager();
+
+}
+
+
+
+function keyPressed() { // p5.js key press event function
+
+  // Notify the formManager
+
+ formManager.keyPressed();
+
+}
+
+
+
+function keyReleased() { // p5.js key release event function
+
+  // Notify the formManager
+
+ formManager.keyReleased();
+
+}
+
+
+
+// FUNCTION TO ADD NEW / SETUP PARAMETERS OF GUI CONTROLS
+
+function P5FA(){
+
+
+
+ form = new P5Form();
+ form.w = 200; 
+ form.h = 300; 
+ form.x = 10; 
+ form.y = 25; 
+ form.title = "Game of Life";
+
+
+
+  // TEXT BOX --> COPY AND PASTE, THEN RENAME, CREATE NEW VARIABLE TO BE UPDATED, AND 'ADD CONTROL')
+
+ t1 = new P5TextBox();
+ t1.text = "cols";
+ t1.x = 10; 
+ t1.y = 10; 
+  var from = 0;
+  var to = 10;
+ t1.onDeactivate = function(){
+ t1.selectText(from, to);
+  var sel = t1.getSelectedText();
+ colsT = int(sel); 
+ }
+
+ t2 = new P5TextBox();
+ t2.text = "rows";
+ t2.x = 10; 
+ t2.y = 40; 
+  var from = 0;
+  var to = 10;
+ t2.onDeactivate = function(){
+ t2.selectText(from, to);
+  var sel = t2.getSelectedText();
+ rowsT = int(sel); 
+ }
+
+ t3 = new P5TextBox();
+ t3.text = "scale";
+ t3.x = 10; 
+ t3.y = 70; 
+  var from = 0;
+  var to = 10;
+ t3.onDeactivate = function(){
+ t3.selectText(from, to);
+  var sel = t3.getSelectedText();
+ scaleT = int(sel); 
+ }
+
+ t4 = new P5TextBox();
+ t4.text = "border";
+ t4.x = 10; 
+ t4.y = 100; 
+  var from = 0;
+  var to = 10;
+ t4.onDeactivate = function(){
+ t4.selectText(from, to);
+  var sel = t4.getSelectedText();
+ bT = int(sel); 
+ }
+
+ t5 = new P5TextBox();
+ t5.text = "frame-rate";
+ t5.x = 10; 
+ t5.y = 130; 
+  var from = 0;
+  var to = 10;
+ t5.onDeactivate = function(){
+ t5.selectText(from, to);
+  var sel = t5.getSelectedText();
+ frT = int(sel); 
+ }
+
+ t6 = new P5TextBox();
+ t6.text = "startingstate";
+ t6.x = 10; 
+ t6.y = 160; 
+  var from = 0;
+  var to = 10;
+ t6.onDeactivate = function(){
+ t6.selectText(from, to);
+  var sel = t6.getSelectedText();
+ sst = int(sel); 
+ }
+
+
+  // BUTTON TO TRIGGER THE RESET() FUNCTION --> SEE IF STATEMENT IN DRAW LOOP 
+
+ b1 = new P5Button();
+ b1.x = 10; 
+ b1.y = 210;
+ b1.text = "Reset";
+ b1.onClick = function(){
+ s1 = !s1; 
+ }
+
+
+
+ form.container.addControl(b1);
+ form.container.addControl(t1);
+ form.container.addControl(t2);
+ form.container.addControl(t3);
+ form.container.addControl(t4);
+ form.container.addControl(t5);
+ form.container.addControl(t6);
+
+
+
+  // ADD NEW TEXT BOXES OR BUTTONS HERE 
+
+
+
+ formManager.showForm(form);
+
+}
+
+
+
+function make2DArray(cols, rows) {
+
+  let arr = new Array(cols);
+
+  for (let i = 0; i < arr.length; i++) {
+
+ arr[i] = new Array(rows);
+
+ }
+
+  return arr;
+
+}
+
+
+
+function init(){
+
+
+
+ cells = make2DArray(cols, rows); 
+
+ cells_2 = make2DArray(cols, rows);
+
+
+
+  for(i = 0; i < cols; i++){
+
+  for(j = 0; j < rows; j++){
+
+
+
+
+
+  // STARTING STATE // ** ONLY ONE OR THE OTHER (LOGICAL OR RANDOM) CAN BE ON (UNCOMMENTED)
+
+
+
+  // INITIALIZE CELLS ARRAY LOGICALLY (COMMENT '//' OR UNCOMMENT TO SET THIS KIND OF INITIALIZATION ON OR OFF)
+
+  if(j % 2 == 0){
+
+ cells[i][j] = 1;
+
+ } else {
+
+ cells[i][j] = 0;
+
+ }
+
+
+
+  // OR INITIALIZE CELLS ARRAY RANDOMLY (COMMENT '//' OR UNCOMMENT TO SET THIS KIND OF INITIALIZATION ON OR OFF)
+
+  // cells[i][j] = floor(random(2)); 
+
+
+
+  // STARTING STATE // 
+
+
+
+ }
+
+ }
+
+
+
+}
+
+
+
+function setup() {
+
+
+
+ c1 = color(10, 30, 30); 
+
+ c0 = color(255);
+
+ cb = color(255);
+
+
+
+ formManager = new P5FormManager();
+
+
+
+  noStroke();
+
+
+
+  createCanvas(cx, cy); 
+
+
+
+  P5FA();
+
+
+
+  init(); 
+
+
+
+}
+
+
+
+function render(){
+
+
+
+  for(i = 0; i < cols; i++){
+
+  for(j = 0; j < rows; j++){
+
+
+
+  if(cells[i][j] == 1){
+
+
+
+  fill(c1);
+
+ } else {
+
+  fill(c0);
+
+ }
+
+
+
+  rect(i * b + ofx, j * b + ofy, s, s);
+
+ }
+
+ }
+
+
+
+  gol();
+
+}
+
+
+
+function reset(){
+
+cols = colsT; 
+rows = rowsT; 
+s = scaleT;
+b = bT; 
+fr = frT; 
+background(cb); 
+
+  init();
+
+  render();
+
+}
+
+
+
+function draw() {
+
+
+
+  background(cb);
+
+
+
+  frameRate(fr);
+
+
+
+  if(s1 == true){
+
+  reset();
+
+ s1 = !s1; 
+
+ }
+
+
+
+ formManager.renderForms();
+
+
+
+  render();
+
+}
+
+
+
+function gol(){
+
+
+
+  for(i = 0; i < cols; i++){
+
+  for(j = 0; j < rows; j++){
+
+ cells_2[i][j] = cells[i][j];
+
+ }
+
+ }
+
+
+
+  for(i = 0; i < cols; i++){
+
+  for(j = 0; j < rows; j++){
+
+  let n = 0; 
+
+
+
+  for (ii=i-1; ii<=i+1;ii++) {
+
+  for (jj=j-1; jj<=j+1;jj++) { 
+
+  if (((ii>=0)&&(ii<cols))&&((jj>=0)&&(jj<rows))) { // Make sure you are not out of bounds
+
+  if (!((ii==i)&&(jj==j))) {
+
+  if (cells_2[ii][jj] == 1){
+
+
+
+ n++;
+
+ }
+
+ }
+
+ }
+
+ }
+
+ }
+
+
+
+
+
+  // ALGORITHMIC PARAMETERS HERE //
+
+  if(cells_2[i][j] == 1){
+
+  if(n > 1){
+
+ cells[i][j] = 0;
+
+ }
+
+ } else {
+
+  if( n == 2){
+
+ cells[i][j] = 1;
+
+ }
+
+ }
+
+  // ALGORITHMIC PARAMETERS HERE // 
+
+
+
+ }
+
+ }
+
+
+
+
+
+}
